@@ -84,6 +84,14 @@ export default function Sidebar() {
             {open && "Đồng hồ học tập"}
           </Link>
         </div>
+        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <Link
+            href="/SINHVIEN/hoc_onl"
+            className="flex items-center gap-2 w-full"
+          >
+            {open && "Hoc tập online"}
+          </Link>
+        </div>
       </nav>
     </aside>
   );

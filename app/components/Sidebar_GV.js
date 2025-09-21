@@ -73,6 +73,14 @@ export default function SidebarGiaoVien() {
             {open && "Lịch dạy"}
           </Link>
         </div>
+        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <Link
+            href="/GIAOVIEN/day_onl"
+            className="flex items-center gap-2 w-full"
+          >
+            {open && "Dạy học online"}
+          </Link>
+        </div>
       </nav>
     </aside>
   );
