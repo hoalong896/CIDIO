@@ -6,25 +6,45 @@ import { useRouter } from "next/navigation";
 export default function PersonalScore() {
   const router = useRouter();
 
-  // Dữ liệu cá nhân tạm thời
-  const [student] = useState({
-    name: "Nguyễn Văn A",
-    math: 8,
-    physics: 7,
-    chemistry: 9,
-  });
+  // Dữ liệu tạm
+  // const [scores] = useState([
+  //   {
+  //     maMon: "MATH101",
+  //     maLop: "L01",
+  //     tenMon: "Toán cao cấp",
+  //     stc: 3,
+  //     diemGoc: 8,
+  //     diemChu: "A",
+  //     diemQD: 4.0,
+  //   },
+  //   {
+  //     maMon: "PHYS101",
+  //     maLop: "L01",
+  //     tenMon: "Vật lý đại cương",
+  //     stc: 3,
+  //     diemGoc: 7,
+  //     diemChu: "B",
+  //     diemQD: 3.0,
+  //   },
+  //   {
+  //     maMon: "CHEM101",
+  //     maLop: "L02",
+  //     tenMon: "Hóa học cơ bản",
+  //     stc: 2,
+  //     diemGoc: 9,
+  //     diemChu: "A+",
+  //     diemQD: 4.0,
+  //   },
+  // ]);
 
-  const average = (
-    (student.math + student.physics + student.chemistry) /
-    3
-  ).toFixed(2);
+  const [filter, setFilter] = useState("");
+  const [keyword, setKeyword] = useState("");
 
-  const rank = () => {
-    if (average >= 8) return "Giỏi";
-    if (average >= 6.5) return "Khá";
-    if (average >= 5) return "Trung bình";
-    return "Yếu";
-  };
+  // const filteredScores = scores.filter(
+  //   (item) =>
+  //     (filter ? item.maMon === filter : true) &&
+  //     (keyword ? item.maMon.includes(keyword) : true)
+  // );
 
   return (
     <div className="min-h-screen bg-[#1e1e2f] p-6 flex flex-col items-center relative">
@@ -37,49 +57,72 @@ export default function PersonalScore() {
       </button>
 
       <h1 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
-        Bảng Điểm Cá Nhân
+        Bảng điểm Sinh Viên
       </h1>
 
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
-        <h2 className="text-xl font-semibold mb-4">{student.name}</h2>
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-4xl p-6">
+        {/* Bộ lọc */}
+        <div className="flex gap-3 mb-4 items-center text-black">
+          <select
+            className="border rounded-lg px-3 py-2"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="">Chọn Môn Học</option>
+            {/* {scores.map((s) => (
+              <option key={s.maMon} value={s.maMon}>
+                {s.tenMon}
+              </option>
+            ))} */}
+          </select>
 
-        <table className="w-full text-gray-800 mb-4">
-          <tbody>
-            <tr className="border-b">
-              <td className="py-2">Toán</td>
-              <td className="text-center">{student.math}</td>
+          <input
+            type="text"
+            placeholder="Nhập Mã Số Môn Học ..."
+            className="border rounded-lg px-3 py-2 flex-1"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+
+          <button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-lg hover:from-purple-500 hover:to-pink-500 shadow">
+            Tìm Kiếm
+          </button>
+        </div>
+
+        {/* Bảng điểm */}
+        <table className="w-full border-collapse text-gray-800">
+          <thead>
+            <tr className="bg-gray-100 text-left">
+              <th className="px-3 py-2">Mã Môn</th>
+              <th className="px-3 py-2">Mã Lớp</th>
+              <th className="px-3 py-2">Tên Môn</th>
+              <th className="px-3 py-2">STC</th>
+              <th className="px-3 py-2">Điểm gốc</th>
+              <th className="px-3 py-2">Điểm chữ</th>
+              <th className="px-3 py-2">Điểm quy đổi</th>
             </tr>
-            <tr className="border-b">
-              <td className="py-2">Vật Lý</td>
-              <td className="text-center">{student.physics}</td>
-            </tr>
-            <tr className="border-b">
-              <td className="py-2">Hóa Học</td>
-              <td className="text-center">{student.chemistry}</td>
-            </tr>
-            <tr className="border-t font-semibold">
-              <td className="py-2">Trung Bình</td>
-              <td className="text-center">{average}</td>
-            </tr>
-            <tr>
-              <td className="py-2">Xếp Loại</td>
-              <td className="text-center">
-                <span
-                  className={`px-2 py-1 rounded-full ${
-                    rank() === "Giỏi"
-                      ? "bg-green-400 text-white"
-                      : rank() === "Khá"
-                      ? "bg-blue-400 text-white"
-                      : rank() === "Trung bình"
-                      ? "bg-yellow-400 text-white"
-                      : "bg-red-400 text-white"
-                  }`}
-                >
-                  {rank()}
-                </span>
-              </td>
-            </tr>
-          </tbody>
+          </thead>
+          {/* <tbody>
+            {filteredScores.length > 0 ? (
+              filteredScores.map((row, index) => (
+                <tr key={index} className="border-b">
+                  <td className="px-3 py-2">{row.maMon}</td>
+                  <td className="px-3 py-2">{row.maLop}</td>
+                  <td className="px-3 py-2">{row.tenMon}</td>
+                  <td className="px-3 py-2 text-center">{row.stc}</td>
+                  <td className="px-3 py-2 text-center">{row.diemGoc}</td>
+                  <td className="px-3 py-2 text-center">{row.diemChu}</td>
+                  <td className="px-3 py-2 text-center">{row.diemQD}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="text-center py-4 text-gray-500">
+                  Không có dữ liệu
+                </td>
+              </tr>
+            )}
+          </tbody> */}
         </table>
       </div>
     </div>

@@ -48,7 +48,7 @@ export default function ScheduleCalendar() {
           ← Quay lại
         </Link>
 
-        <h1 className="text-xl font-bold text-white"> Lịch học của bạn</h1>
+        <h1 className="text-xl font-bold text-white"> Lịch dạy của bạn</h1>
 
         <div className="flex items-center gap-2">
           <label htmlFor="dateFilter" className="text-white font-medium">

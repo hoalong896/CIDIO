@@ -26,17 +26,26 @@ export default function Sidebar() {
       {/* Nav menu */}
       <nav className="flex-1 mt-4 space-y-3 px-3 text-sm font-medium">
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link href="/lichhoc" className="flex items-center gap-2 w-full">
+          <Link
+            href="/SINHVIEN/lichhoc"
+            className="flex items-center gap-2 w-full"
+          >
             {open && "Lịch học"}
           </Link>
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link href="/bangdiem" className="flex items-center gap-2 w-full">
+          <Link
+            href="/SINHVIEN/bangdiem"
+            className="flex items-center gap-2 w-full"
+          >
             {open && "Bảng điểm"}
           </Link>
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link href="/thongke" className="flex items-center gap-2 w-full">
+          <Link
+            href="/SINHVIEN/thongke"
+            className="flex items-center gap-2 w-full"
+          >
             {open && "Thống kê học tập"}
           </Link>
         </div>
@@ -44,22 +53,34 @@ export default function Sidebar() {
           {open && "Môn học"}
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link href="/ghichu" className="flex items-center gap-2 w-full">
+          <Link
+            href="/SINHVIEN/ghichu"
+            className="flex items-center gap-2 w-full"
+          >
             {open && "Ghi chú học tập"}
           </Link>
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link href="/kiemtra" className="flex items-center gap-2 w-full">
+          <Link
+            href="/SINHVIEN/kiemtra"
+            className="flex items-center gap-2 w-full"
+          >
             {open && "kiểm tra"}
           </Link>
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link href="/remind" className="flex items-center gap-2 w-full">
+          <Link
+            href="/SINHVIEN/remind"
+            className="flex items-center gap-2 w-full"
+          >
             {open && "Nhắc nhở học tập"}
           </Link>
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link href="/dongho" className="flex items-center gap-2 w-full">
+          <Link
+            href="/SINHVIEN/dongho"
+            className="flex items-center gap-2 w-full"
+          >
             {open && "Đồng hồ học tập"}
           </Link>
         </div>

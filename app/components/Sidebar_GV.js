@@ -27,14 +27,6 @@ export default function SidebarGiaoVien() {
       <nav className="flex-1 mt-4 space-y-3 px-3 text-sm font-medium">
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
           <Link
-            href="/giaovien/thongtin"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Quản lý thông tin cá nhân"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
             href="/giaovien/danhgia"
             className="flex items-center gap-2 w-full"
           >
@@ -43,7 +35,7 @@ export default function SidebarGiaoVien() {
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
           <Link
-            href="/giaovien/tao-kiemtra"
+            href="/GIAOVIEN/baikiemtra"
             className="flex items-center gap-2 w-full"
           >
             {open && "Tạo bài kiểm tra"}
@@ -59,7 +51,7 @@ export default function SidebarGiaoVien() {
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
           <Link
-            href="/giaovien/xem-diem"
+            href="/GIAOVIEN/bangdiem2"
             className="flex items-center gap-2 w-full"
           >
             {open && "Xem điểm"}
@@ -67,10 +59,18 @@ export default function SidebarGiaoVien() {
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
           <Link
-            href="/giaovien/tao-khoahoc"
+            href="/GIAOVIEN/khoahoc"
             className="flex items-center gap-2 w-full"
           >
             {open && "Tạo khóa học"}
+          </Link>
+        </div>
+        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <Link
+            href="/GIAOVIEN/lichday"
+            className="flex items-center gap-2 w-full"
+          >
+            {open && "Lịch dạy"}
           </Link>
         </div>
       </nav>

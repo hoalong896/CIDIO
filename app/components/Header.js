@@ -58,6 +58,8 @@ export default function Header() {
       <nav className="hidden md:flex gap-6 text-sm font-medium">
         <a
           href="https://www.facebook.com/hung.pham.870122/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="hover:text-green-400"
         >
           Blog
