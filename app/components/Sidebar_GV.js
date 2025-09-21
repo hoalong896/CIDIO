@@ -27,7 +27,7 @@ export default function SidebarGiaoVien() {
       <nav className="flex-1 mt-4 space-y-3 px-3 text-sm font-medium">
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
           <Link
-            href="/giaovien/danhgia"
+            href="/GIAOVIEN/danhgiasv"
             className="flex items-center gap-2 w-full"
           >
             {open && "Đánh giá sinh viên"}
@@ -43,7 +43,7 @@ export default function SidebarGiaoVien() {
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
           <Link
-            href="/giaovien/tien-do"
+            href="/GIAOVIEN/tiendo"
             className="flex items-center gap-2 w-full"
           >
             {open && "Xem tiến độ học tập"}

@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MessageCircle, X } from "lucide-react";
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -22,6 +23,21 @@ export default function ChatWidget() {
     const data = await res.json();
 
     setMessages((prev) => [...prev, { role: "ai", text: data.reply }]);
+  };
+
+  // Scroll tự động tới tin nhắn mới nhất
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  // Xử lý Enter để gửi
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
   return (
@@ -65,6 +81,8 @@ export default function ChatWidget() {
                 </div>
               </div>
             ))}
+            {/* Chỗ đánh dấu để auto-scroll */}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}
@@ -72,6 +90,7 @@ export default function ChatWidget() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="Nhập tin nhắn..."
               className="flex-1 border rounded-full px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
