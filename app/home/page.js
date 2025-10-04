@@ -34,7 +34,7 @@ export default function HomePage() {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      {vaiTro === "giaovien" ? <SidebarGiaoVien /> : <Sidebar />}
+      {vaiTro === "giangvien" ? <SidebarGiaoVien /> : <Sidebar />}
 
       {/* Main content */}
       <main className="flex-1 flex flex-col relative">

@@ -2,12 +2,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export default function Header() {
+export default function HeaderKhoaHoc() {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState(null); 
+  const [user, setUser] = useState(null);
+  const [courses, setCourses] = useState([]); 
   const router = useRouter();
 
-  
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -21,23 +21,39 @@ export default function Header() {
 
         if (res.ok) {
           setUser(data);
-         
           localStorage.setItem("user", JSON.stringify(data));
         }
       } catch (err) {
-        console.error(" Lỗi khi lấy profile:", err);
+        console.error("Lỗi khi lấy profile:", err);
       }
     };
 
-   
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch("/api/Giangvien/khoahoc", {
+          headers: { Authorization: "Bearer " + token },
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          setCourses(data); 
+        }
+      } catch (err) {
+        console.error("Lỗi khi lấy khóa học:", err);
+      }
+    };
+
     const cachedUser = localStorage.getItem("user");
     if (cachedUser) {
       setUser(JSON.parse(cachedUser));
     }
 
     fetchUser();
+    fetchCourses();
 
-    
     const handleStorage = () => {
       const updatedUser = localStorage.getItem("user");
       if (updatedUser) setUser(JSON.parse(updatedUser));
@@ -52,28 +68,32 @@ export default function Header() {
   return (
     <header className="flex items-center justify-between bg-[#0a1a2f] text-white px-6 py-4 shadow-md relative">
       {/* Logo */}
-      <div className="font-bold text-lg">LEAP</div>
+      <div
+        onClick={() => router.push("/home")}
+        className="font-bold text-lg cursor-pointer"
+      >
+        LEAP
+      </div>
 
-      {/* Menu */}
-      <nav className="hidden md:flex gap-6 text-sm font-medium">
-        <a
-          href="https://www.facebook.com/hung.pham.870122/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-green-400"
-        >
-          Blog
-        </a>
-        <a href="#" className="hover:text-green-400">
-          Flashcards
-        </a>
-        <a href="#" className="hover:text-green-400">
-          Đề thi online
-        </a>
-        <a href="#" className="hover:text-green-400">
-          Khóa học của tôi
-        </a>
-      </nav>
+      {/* Danh sách khóa học */}
+      <div className="hidden md:flex gap-4 items-center text-black">
+        {courses.length > 0 ? (
+          <select
+            onChange={(e) => router.push(`/GIAOVIEN/khoahoc/${e.target.value}`)}
+            className="bg-white text-black px-3 py-1 rounded-lg"
+          >
+            <option value="">-- Chọn khóa học --</option>
+        {courses.map((c) => (
+  <option key={c.ma_khoahoc || c.id} value={c.ma_khoahoc || c.id}>
+    {c.ten_khoahoc}
+  </option>
+))}
+
+          </select>
+        ) : (
+          <span className="text-sm text-gray-300">Không có khóa học</span>
+        )}
+      </div>
 
       {/* Avatar */}
       <div className="relative">

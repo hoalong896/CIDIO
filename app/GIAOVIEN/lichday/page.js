@@ -1,86 +1,140 @@
 "use client";
-import { useState } from "react";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
-import { enUS } from "date-fns/locale";
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-// Cấu hình date-fns
-const locales = { "en-US": enUS };
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }),
-  getDay,
-  locales,
-});
+const localizer = momentLocalizer(moment);
 
-// Dữ liệu mẫu
-const events = [
-  {
-    title: "Tiết học hiện tại",
-    start: new Date(2025, 8, 20, 8, 0),
-    end: new Date(2025, 8, 20, 10, 0),
-  },
-  {
-    title: "Thảo luận nhóm",
-    start: new Date(2025, 8, 21, 13, 30),
-    end: new Date(2025, 8, 21, 15, 0),
-  },
-];
+export default function TeacherSchedule() {
+  const [events, setEvents] = useState([]);
+  const [currentDate, setCurrentDate] = useState(new Date()); // state để điều khiển tuần
+  const router = useRouter();
 
-export default function ScheduleCalendar() {
-  const [myEvents] = useState(events);
-  const [currentDate, setCurrentDate] = useState(new Date());
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/Giangvien/lichday", {
+          headers: { Authorization: "Bearer " + token },
+        });
+        const data = await res.json();
 
-  // Đổi ngày khi chọn input
-  const handleDateChange = (e) => {
-    const newDate = new Date(e.target.value);
-    if (!isNaN(newDate)) setCurrentDate(newDate);
+        // convert start, end sang Date chuẩn
+        const parsedEvents = data.map((item, idx) => ({
+          id: idx,
+          title: item.title,
+          location: item.location,
+          start: new Date(item.start), // cần ISO hoặc YYYY-MM-DD HH:mm:ss
+          end: new Date(item.end),
+        }));
+
+        setEvents(parsedEvents);
+      } catch (err) {
+        console.error("Lỗi load lịch:", err);
+      }
+    };
+    fetchSchedule();
+  }, []);
+
+  // Style event giống hình (vàng nhạt, viền xám, text xuống dòng)
+  const eventStyleGetter = () => {
+    return {
+      style: {
+        backgroundColor: "#FFF9C4", // vàng nhạt
+        border: "1px solid #E5E7EB", // viền xám nhạt
+        borderRadius: "4px",
+        color: "#111827",
+        fontSize: "13px",
+        fontWeight: 500,
+        padding: "6px",
+        whiteSpace: "normal", // cho xuống dòng
+        lineHeight: "1.2rem",
+      },
+    };
   };
 
+  // Nội dung hiển thị trong ô event
+const EventComponent = ({ event }) => (
+  <div className="leading-snug">
+    <div className="font-semibold text-sm"> {event.title}</div>
+    {event.location && (
+      <div className="text-xs text-gray-700">{event.location}</div>
+    )}
+    <div className="text-xs text-gray-600">
+      {moment(event.start).format("HH:mm")} - {moment(event.end).format("HH:mm")}
+    </div>
+  </div>
+);
+
+
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* Thanh header đỏ */}
-      <div className="p-4 bg-[#0a1a2f] flex items-center justify-between shadow-md">
-        <Link href="/home" className="text-white font-semibold hover:underline">
-          ← Quay lại
-        </Link>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Nút quay lại */}
+      <button
+        className="mb-4 px-4 py-2 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-700"
+        onClick={() => router.back()}
+      >
+        ← Quay lại
+      </button>
 
-        <h1 className="text-xl font-bold text-white"> Lịch dạy của bạn</h1>
+      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 text-purple-700">
+         Lịch dạy của bạn
+      </h1>
 
-        <div className="flex items-center gap-2">
-          <label htmlFor="dateFilter" className="text-white font-medium">
-            Chọn ngày:
-          </label>
-          <input
-            id="dateFilter"
-            type="date"
-            className="px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400 text-white"
-            onChange={handleDateChange}
-          />
-        </div>
-      </div>
-
-      {/* Calendar chiếm toàn trang */}
-      <div className="flex-1">
+      <div className="bg-white border rounded-xl shadow-md p-4">
         <Calendar
           localizer={localizer}
-          events={myEvents}
+          events={events}
           startAccessor="start"
           endAccessor="end"
-          views={["month", "week", "day"]}
-          defaultView="week"
           date={currentDate}
-          onNavigate={(date) => setCurrentDate(date)}
-          style={{
-            height: "100%",
-            minHeight: "calc(100vh - 70px)",
-            backgroundColor: "white",
-            color: "black",
+          onNavigate={(date) => setCurrentDate(date)} 
+          defaultView="week"
+          views={["week"]}
+          step={30}
+          timeslots={2}
+          style={{ height: 650 }}
+          eventPropGetter={eventStyleGetter}
+          components={{ event: EventComponent }}
+          messages={{
+            today: "Hôm nay",
+            previous: "Trước",
+            next: "Tiếp",
+            month: "Tháng",
+            week: "Tuần",
+            day: "Ngày",
           }}
         />
+
+        <style jsx global>{`
+          .rbc-header {
+            color: #111827 !important;
+            font-weight: 600;
+            font-size: 14px;
+          }
+          .rbc-toolbar {
+            margin-bottom: 12px;
+          }
+          .rbc-toolbar-label {
+            color: #111827 !important;
+            font-weight: 700;
+            font-size: 1.1rem;
+          }
+          .rbc-time-gutter .rbc-timeslot-group,
+          .rbc-time-gutter .rbc-label {
+            color: #374151 !important;
+            font-weight: 500;
+            font-size: 12px;
+          }
+          .rbc-today {
+            background-color: #fef9c3 !important; /* ngày hiện tại vàng nhạt */
+          }
+          .rbc-event {
+            cursor: default;
+          }
+        `}</style>
       </div>
     </div>
   );

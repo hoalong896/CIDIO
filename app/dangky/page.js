@@ -8,7 +8,7 @@ export default function DangKy() {
     ho_ten: "",
     email: "",
     mat_khau: "",
-    vai_tro: "nguoidung",
+    vai_tro: "sinhvien",
     so_dien_thoai: "",
     ngay_sinh: "",
   });
@@ -17,7 +17,7 @@ export default function DangKy() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -29,17 +29,19 @@ export default function DangKy() {
       const res = await fetch("/api/auth/dangky", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData)
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        setMessage(" Đăng ký thành công! Bạn có thể đăng nhập.");
+        setMessage("Đăng ký thành công! Bạn có thể đăng nhập.");
       } else {
-        setMessage(" " + (data.error || "Có lỗi xảy ra"));
+        console.log("API error:", data.error);
+        setMessage(data.error || "Có lỗi xảy ra");
       }
     } catch (err) {
+      console.log("Fetch error:", err);
       setMessage("Lỗi kết nối server");
     } finally {
       setLoading(false);
@@ -47,10 +49,7 @@ export default function DangKy() {
   };
 
   return (
-    <main
-      className="flex min-h-screen items-center justify-center bg-cover bg-center p-6 text-black"
-      style={{ backgroundImage: "url('/bg.jpg')" }}
-    >
+    <main className="flex min-h-screen items-center justify-center bg-cover bg-center p-6 text-black" style={{ backgroundImage: "url('/bg.jpg')" }}>
       <div className="bg-white/30 backdrop-blur-md p-8 rounded-lg shadow-lg w-[450px]">
         <h1 className="text-2xl font-bold mb-6 text-center">ĐĂNG KÝ</h1>
 
@@ -60,114 +59,28 @@ export default function DangKy() {
             <p className="mb-2 font-medium">Bạn là:</p>
             <div className="flex justify-between">
               <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="vai_tro"
-                  value="giaovien"
-                  checked={formData.vai_tro === "giaovien"}
-                  onChange={handleChange}
-                />
-                Giáo viên
+                <input type="radio" name="vai_tro" value="giangvien" checked={formData.vai_tro==="giangvien"} onChange={handleChange}/> Giáo viên
               </label>
               <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  name="vai_tro"
-                  value="nguoidung"
-                  checked={formData.vai_tro === "nguoidung"}
-                  onChange={handleChange}
-                />
-                Người dùng
+                <input type="radio" name="vai_tro" value="sinhvien" checked={formData.vai_tro==="sinhvien"} onChange={handleChange}/> Người dùng
               </label>
             </div>
           </div>
 
-          {/* Tên đăng nhập */}
-          <input
-            type="text"
-            name="ten_dangnhap"
-            value={formData.ten_dangnhap}
-            onChange={handleChange}
-            placeholder="Tên đăng nhập"
-            className="border p-2 rounded bg-white/80"
-            required
-          />
+          <input type="text" name="ten_dangnhap" value={formData.ten_dangnhap} onChange={handleChange} placeholder="Tên đăng nhập" className="border p-2 rounded bg-white/80" required/>
+          <input type="text" name="ho_ten" value={formData.ho_ten} onChange={handleChange} placeholder="Họ và tên" className="border p-2 rounded bg-white/80" required/>
+          <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" className="border p-2 rounded bg-white/80" required/>
+          <input type="password" name="mat_khau" value={formData.mat_khau} onChange={handleChange} placeholder="Mật khẩu" className="border p-2 rounded bg-white/80" required/>
+          <input type="tel" name="so_dien_thoai" value={formData.so_dien_thoai} onChange={handleChange} placeholder="Số điện thoại" className="border p-2 rounded bg-white/80"/>
+          <input type="date" name="ngay_sinh" value={formData.ngay_sinh} onChange={handleChange} className="border p-2 rounded bg-white/80"/>
 
-          {/* Họ tên */}
-          <input
-            type="text"
-            name="ho_ten"
-            value={formData.ho_ten}
-            onChange={handleChange}
-            placeholder="Họ và tên"
-            className="border p-2 rounded bg-white/80"
-            required
-          />
-
-          {/* Email */}
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email"
-            className="border p-2 rounded bg-white/80"
-            required
-          />
-
-          {/* Mật khẩu */}
-          <input
-            type="password"
-            name="mat_khau"
-            value={formData.mat_khau}
-            onChange={handleChange}
-            placeholder="Mật khẩu"
-            className="border p-2 rounded bg-white/80"
-            required
-          />
-
-          {/* Số điện thoại */}
-          <input
-            type="text"
-            name="so_dien_thoai"
-            value={formData.so_dien_thoai}
-            onChange={handleChange}
-            placeholder="Số điện thoại"
-            className="border p-2 rounded bg-white/80"
-          />
-
-          {/* Ngày sinh */}
-          <input
-            type="date"
-            name="ngay_sinh"
-            value={formData.ngay_sinh}
-            onChange={handleChange}
-            className="border p-2 rounded bg-white/80"
-          />
-
-          {/* Nút đăng ký */}
-          <button
-            type="submit"
-            className="bg-black text-white py-2 rounded hover:bg-gray-800 disabled:opacity-50"
-            disabled={loading}
-          >
+          <button type="submit" className="bg-black text-white py-2 rounded hover:bg-gray-800 disabled:opacity-50" disabled={loading}>
             {loading ? "Đang xử lý..." : "Đăng ký"}
           </button>
 
-          {/* Thông báo */}
-          {message && (
-            <p className="text-center text-sm font-medium">{message}</p>
-          )}
+          {message && <p className="text-center text-sm font-medium">{message}</p>}
 
-          {/* Nút trở lại */}
-          <Link href="/">
-            <button
-              type="button"
-              className="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700"
-            >
-              Trở lại
-            </button>
-          </Link>
+          <Link href="/"><button type="button" className="w-full bg-gray-600 text-white py-2 rounded hover:bg-gray-700">Trở lại</button></Link>
         </form>
       </div>
     </main>

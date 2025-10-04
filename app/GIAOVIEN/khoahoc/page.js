@@ -1,123 +1,189 @@
 "use client";
 import { useState } from "react";
-import { ArrowLeft, PlusCircle, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Header from "../../components/khoahoc";
 
-export default function CourseCreatePage() {
-  const router = useRouter();
+export default function TaoKhoaHocDonGian() {
+  const [tenKhoaHoc, setTenKhoaHoc] = useState("");
+  const [moTa, setMoTa] = useState("");
+  const [ngayBatDau, setNgayBatDau] = useState("");
+  const [ngayKetThuc, setNgayKetThuc] = useState("");
+  const [gioBatDau, setGioBatDau] = useState("");
+  const [gioKetThuc, setGioKetThuc] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Dữ liệu tạm
-  const [courses, setCourses] = useState([]);
-  const [form, setForm] = useState({
-    maMon: "",
-    tenMon: "",
-    stc: "",
-    giangVien: "",
-  });
-
-  // Thêm khóa học
-  const handleAdd = () => {
-    if (!form.maMon || !form.tenMon) {
-      alert("Vui lòng nhập đủ thông tin!");
-      return;
-    }
-    setCourses([...courses, form]);
-    setForm({ maMon: "", tenMon: "", stc: "", giangVien: "" });
+  const isValidDate = (str) => {
+    const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    if (!regex.test(str)) return false;
+    const [day, month, year] = str.split("/").map(Number);
+    const date = new Date(year, month - 1, day);
+    return (
+      date &&
+      date.getFullYear() === year &&
+      date.getMonth() + 1 === month &&
+      date.getDate() === day
+    );
   };
 
-  // Xóa khóa học
-  const handleDelete = (index) => {
-    const newCourses = [...courses];
-    newCourses.splice(index, 1);
-    setCourses(newCourses);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage("");
+    setLoading(true);
+
+    if (!tenKhoaHoc || !ngayBatDau || !ngayKetThuc || !gioBatDau || !gioKetThuc) {
+      setMessage("Vui lòng nhập đầy đủ thông tin");
+      setLoading(false);
+      return;
+    }
+
+    if (!isValidDate(ngayBatDau) || !isValidDate(ngayKetThuc)) {
+      setMessage("Ngày không hợp lệ (đúng định dạng dd/mm/yyyy)");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/Giangvien/khoahoc", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({
+          ten_khoahoc: tenKhoaHoc,
+          mo_ta: moTa,
+          ngay_batdau: ngayBatDau,
+          gio_batdau: gioBatDau,
+          ngay_ketthuc: ngayKetThuc,
+          gio_ketthuc: gioKetThuc,
+          lich_hoc: [],
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setMessage("Tạo khóa học thành công!");
+        setTenKhoaHoc("");
+        setMoTa("");
+        setNgayBatDau("");
+        setNgayKetThuc("");
+        setGioBatDau("");
+        setGioKetThuc("");
+      } else {
+        setMessage(data.error || "Có lỗi xảy ra");
+      }
+    } catch (err) {
+      setMessage("Lỗi kết nối server");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#1e1e2f] p-6 flex flex-col items-center relative">
-      {/* Nút quay lại */}
-      <button
-        onClick={() => router.push("/home")}
-        className="fixed top-4 left-4 flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-pink-500 hover:to-purple-500 shadow-lg z-50 transition-all"
-      >
-        <ArrowLeft size={16} /> Quay lại
-      </button>
+    <div className="min-h-screen flex flex-col bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100">
+      {/* Header luôn trên đầu */}
+      <Header />
 
-      <h1 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
-        Tạo Khóa Học Cho Sinh Viên
-      </h1>
+      {/* Nội dung chính */}
+      <main className="flex flex-1 items-center justify-center p-6">
+        <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-lg text-black">
+          <h1 className="text-3xl font-bold text-center mb-6 text-purple-700">
+            TẠO KHÓA HỌC
+          </h1>
 
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-4xl p-6 text-black">
-        {/* Form nhập */}
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <input
-            type="text"
-            placeholder="Mã môn học"
-            className="border rounded-lg px-3 py-2"
-            value={form.maMon}
-            onChange={(e) => setForm({ ...form, maMon: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Tên môn học"
-            className="border rounded-lg px-3 py-2"
-            value={form.tenMon}
-            onChange={(e) => setForm({ ...form, tenMon: e.target.value })}
-          />
-          <input
-            type="number"
-            placeholder="Số tín chỉ"
-            className="border rounded-lg px-3 py-2"
-            value={form.stc}
-            onChange={(e) => setForm({ ...form, stc: e.target.value })}
-          />
-        </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Tên khóa học"
+              value={tenKhoaHoc}
+              onChange={(e) => setTenKhoaHoc(e.target.value)}
+              className="border p-2 rounded-lg w-full"
+              required
+            />
 
-        <button
-          onClick={handleAdd}
-          className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-lg hover:from-purple-500 hover:to-pink-500 shadow mb-4"
-        >
-          <PlusCircle size={18} /> Thêm Khóa Học
-        </button>
+            <input
+              type="text"
+              placeholder="Mô tả (tùy chọn)"
+              value={moTa}
+              onChange={(e) => setMoTa(e.target.value)}
+              className="border p-2 rounded-lg w-full"
+            />
 
-        {/* Bảng khóa học */}
-        <table className="w-full border-collapse text-gray-800 text-black">
-          <thead>
-            <tr className="bg-gray-100 text-left ">
-              <th className="px-3 py-2">Mã Môn</th>
-              <th className="px-3 py-2">Tên Môn</th>
-              <th className="px-3 py-2">STC</th>
-              <th className="px-3 py-2">Giảng Viên</th>
-              <th className="px-3 py-2 text-center">Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {courses.length > 0 ? (
-              courses.map((c, index) => (
-                <tr key={index} className="border-b">
-                  <td className="px-3 py-2">{c.maMon}</td>
-                  <td className="px-3 py-2">{c.tenMon}</td>
-                  <td className="px-3 py-2 text-center">{c.stc}</td>
-                  <td className="px-3 py-2">{c.giangVien}</td>
-                  <td className="px-3 py-2 text-center">
-                    <button
-                      onClick={() => handleDelete(index)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="text-center py-4 text-gray-500">
-                  Chưa có khóa học nào
-                </td>
-              </tr>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Ngày bắt đầu (dd/mm/yyyy)
+                </label>
+                <input
+                  type="text"
+                  value={ngayBatDau}
+                  onChange={(e) => setNgayBatDau(e.target.value)}
+                  className="border p-2 rounded-lg w-full"
+                  placeholder="dd/mm/yyyy"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Giờ bắt đầu</label>
+                <input
+                  type="time"
+                  value={gioBatDau}
+                  onChange={(e) => setGioBatDau(e.target.value)}
+                  className="border p-2 rounded-lg w-full"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Ngày kết thúc (dd/mm/yyyy)
+                </label>
+                <input
+                  type="text"
+                  value={ngayKetThuc}
+                  onChange={(e) => setNgayKetThuc(e.target.value)}
+                  className="border p-2 rounded-lg w-full"
+                  placeholder="dd/mm/yyyy"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Giờ kết thúc</label>
+                <input
+                  type="time"
+                  value={gioKetThuc}
+                  onChange={(e) => setGioKetThuc(e.target.value)}
+                  className="border p-2 rounded-lg w-full"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-purple-600 text-white py-3 rounded-xl font-bold hover:bg-purple-700 mt-4 disabled:opacity-50"
+            >
+              {loading ? "Đang tạo..." : "Tạo khóa học"}
+            </button>
+
+            {message && (
+              <p
+                className={`text-center mt-2 font-medium ${
+                  message.includes("thành công")
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {message}
+              </p>
             )}
-          </tbody>
-        </table>
-      </div>
+          </form>
+        </div>
+      </main>
     </div>
   );
 }

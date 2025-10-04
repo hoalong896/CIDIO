@@ -16,7 +16,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex items-center justify-between p-4 font-bold text-lg">
         <span className="flex items-center gap-2">
-          {open && <span>NGƯỚI DÙNG </span>}
+          {open && <span>NGƯỜI DÙNG </span>}
         </span>
         <button onClick={() => setOpen(!open)}>
           <Menu size={20} />
@@ -82,6 +82,14 @@ export default function Sidebar() {
             className="flex items-center gap-2 w-full"
           >
             {open && "Đồng hồ học tập"}
+          </Link>
+        </div>
+         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <Link
+            href="/SINHVIEN/khoahoc"
+            className="flex items-center gap-2 w-full"
+          >
+            {open && "Đăng ký khóa học"}
           </Link>
         </div>
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
