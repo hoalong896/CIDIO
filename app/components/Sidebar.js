@@ -1,11 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Menu } from "lucide-react";
+import { Menu, Calendar, FileText, BarChart3, BookOpen, StickyNote, FileCheck, Bell, Clock, GraduationCap, MonitorPlay, TrendingUp } from "lucide-react";
 import Link from "next/link";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
+
+  const menuItems = [
+    { href: "/SINHVIEN/lichhoc", icon: Calendar, label: "Lịch học" },
+    { href: "/SINHVIEN/bangdiem", icon: FileText, label: "Bảng điểm" },
+    { href: "/SINHVIEN/thongke", icon: BarChart3, label: "Thống kê học tập" },
+    { href: "/SINHVIEN/tiendo", icon: TrendingUp, label: "Theo dõi tiến độ" },
+    { href: "/SINHVIEN/monhoc", icon: BookOpen, label: "Môn học" },
+    { href: "/SINHVIEN/ghichu", icon: StickyNote, label: "Ghi chú học tập" },
+    { href: "/SINHVIEN/kiemtra", icon: FileCheck, label: "Kiểm tra" },
+    { href: "/SINHVIEN/remind", icon: Bell, label: "Nhắc nhở học tập" },
+    { href: "/SINHVIEN/dongho", icon: Clock, label: "Đồng hồ học tập" },
+    { href: "/SINHVIEN/khoahoc", icon: GraduationCap, label: "Đăng ký khóa học" },
+    { href: "/SINHVIEN/hoc_onl", icon: MonitorPlay, label: "Học tập online" },
+  ];
 
   return (
     <aside
@@ -16,90 +30,28 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex items-center justify-between p-4 font-bold text-lg">
         <span className="flex items-center gap-2">
-          {open && <span>NGƯỜI DÙNG </span>}
+          {open && <span>NGƯỜI DÙNG</span>}
         </span>
-        <button onClick={() => setOpen(!open)}>
+        <button onClick={() => setOpen(!open)} className="hover:bg-gray-700 p-2 rounded">
           <Menu size={20} />
         </button>
       </div>
 
       {/* Nav menu */}
-      <nav className="flex-1 mt-4 space-y-3 px-3 text-sm font-medium">
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/SINHVIEN/lichhoc"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Lịch học"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/SINHVIEN/bangdiem"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Bảng điểm"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/SINHVIEN/thongke"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Thống kê học tập"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          {open && "Môn học"}
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/SINHVIEN/ghichu"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Ghi chú học tập"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/SINHVIEN/kiemtra"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "kiểm tra"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/SINHVIEN/remind"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Nhắc nhở học tập"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/SINHVIEN/dongho"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Đồng hồ học tập"}
-          </Link>
-        </div>
-         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/SINHVIEN/khoahoc"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Đăng ký khóa học"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/SINHVIEN/hoc_onl"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Hoc tập online"}
-          </Link>
-        </div>
+      <nav className="flex-1 mt-4 space-y-2 px-3 text-sm font-medium overflow-y-auto">
+        {menuItems.map((item, index) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={index}
+              href={item.href}
+              className="flex items-center gap-3 hover:bg-gray-700 p-3 rounded cursor-pointer transition-colors"
+            >
+              <Icon size={20} className="flex-shrink-0" />
+              {open && <span>{item.label}</span>}
+            </Link>
+          );
+        })}
       </nav>
     </aside>
   );
