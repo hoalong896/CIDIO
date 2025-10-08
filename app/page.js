@@ -31,8 +31,9 @@ export default function Home() {
         return;
       }
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("vai_tro", data.user.vai_tro);
+     localStorage.setItem("token", data.token);
+localStorage.setItem("vai_tro", data.user.vai_tro);
+localStorage.setItem("user", JSON.stringify(data.user)); 
 
       if (data.user.vai_tro === "quantri") {
         router.push("/ADMIN/home");
