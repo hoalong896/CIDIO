@@ -10,16 +10,18 @@ import ChatWidget from "../components/chat_ai";
 
 export default function HomePage() {
   const [vaiTro, setVaiTro] = useState(null);
-  const [loading, setLoading] = useState(true); // 👈 Thêm trạng thái loading
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const role = localStorage.getItem("vai_tro");
+
     if (!role) {
       router.push("/login");
-    } else {
-      setVaiTro(role);
+      return;
     }
+   
+    setVaiTro(role);
     setLoading(false);
   }, [router]);
 
@@ -36,7 +38,7 @@ export default function HomePage() {
       {/* Sidebar */}
       {vaiTro === "giangvien" ? <SidebarGiaoVien /> : <Sidebar />}
 
-      {/* Main content */}
+      {/* Nội dung chính */}
       <main className="flex-1 flex flex-col relative">
         <Header />
         <Slideshow />

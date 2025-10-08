@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Menu } from "lucide-react";
+import { Menu, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 
 export default function SidebarGiaoVien() {
   const [open, setOpen] = useState(true);
+  const [openCourseMenu, setOpenCourseMenu] = useState(false);
 
   return (
     <aside
@@ -57,14 +58,34 @@ export default function SidebarGiaoVien() {
             {open && "Xem điểm"}
           </Link>
         </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/GIAOVIEN/khoahoc"
-            className="flex items-center gap-2 w-full"
+
+        {/* Khóa học với menu con */}
+        <div>
+          <div
+            className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer"
+            onClick={() => setOpenCourseMenu(!openCourseMenu)}
           >
-            {open && "Tạo khóa học"}
-          </Link>
+            <span>{open && "Khóa học"}</span>
+            {open && (openCourseMenu ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+          </div>
+          {openCourseMenu && (
+            <div className="ml-4 mt-1 space-y-1">
+              <Link
+                href="/GIAOVIEN/khoahoc/danhsach"
+                className="block hover:bg-gray-600 p-2 rounded"
+              >
+                {open && "Danh sách"}
+              </Link>
+              <Link
+                href="/GIAOVIEN/khoahoc"
+                className="block hover:bg-gray-600 p-2 rounded"
+              >
+                {open && "Tạo khóa học"}
+              </Link>
+            </div>
+          )}
         </div>
+
         <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
           <Link
             href="/GIAOVIEN/lichday"

@@ -7,7 +7,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Hàm parse ngày giờ hỗ trợ cả yyyy-mm-dd và dd/mm/yyyy
+
 function parseDateTime(dateStr, timeStr) {
   if (!dateStr || !timeStr) return null;
 
@@ -44,7 +44,7 @@ export async function GET(req) {
       .eq("ma_giangvien", userId);
 
     if (error) {
-      console.error("❌ Lỗi query Supabase:", error);
+      console.error(" Lỗi query Supabase:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -52,7 +52,7 @@ export async function GET(req) {
       return NextResponse.json([], { status: 200 });
     }
 
-    // Chuyển thành events cho calendar
+   
     const events = khoaHocs
       .map((kh) => {
         const startDate = parseDateTime(kh.ngay_batdau, kh.gio_batdau);
@@ -72,7 +72,7 @@ export async function GET(req) {
 
     return NextResponse.json(events, { status: 200 });
   } catch (err) {
-    console.error("❌ Server error:", err);
+    console.error(" Server error:", err);
     return NextResponse.json({ error: "Lỗi server: " + err.message }, { status: 500 });
   }
 }

@@ -1,87 +1,75 @@
 "use client";
-import { useState } from "react";
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
-import { enUS } from "date-fns/locale";
-import Link from "next/link";
+
+import { useState, useEffect } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-// Cấu hình date-fns
-const locales = { "en-US": enUS };
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }),
-  getDay,
-  locales,
-});
+const localizer = momentLocalizer(moment);
 
-// Dữ liệu mẫu
-const events = [
-  {
-    title: "Tiết học hiện tại",
-    start: new Date(2025, 8, 20, 8, 0),
-    end: new Date(2025, 8, 20, 10, 0),
-  },
-  {
-    title: "Thảo luận nhóm",
-    start: new Date(2025, 8, 21, 13, 30),
-    end: new Date(2025, 8, 21, 15, 0),
-  },
-];
+export default function StudentSchedule() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-export default function ScheduleCalendar() {
-  const [myEvents] = useState(events);
-  const [currentDate, setCurrentDate] = useState(new Date());
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/Sinhvien/lichhoc", {
+          headers: { Authorization: "Bearer " + token },
+        });
+        const data = await res.json();
 
-  // Đổi ngày khi chọn input
-  const handleDateChange = (e) => {
-    const newDate = new Date(e.target.value);
-    if (!isNaN(newDate)) setCurrentDate(newDate);
-  };
+        if (!res.ok) throw new Error(data.error || "Lỗi khi lấy lịch học");
+
+        console.log("📅 Dữ liệu API:", data);
+
+        setEvents(
+          (data.lichhoc || []).map((l) => ({
+            id: l.id,
+            title: `${l.title} - ${l.room}`,
+            start: new Date(l.start),
+            end: new Date(l.end),
+          }))
+        );
+      } catch (err) {
+        console.error("❌ Lỗi fetch lịch:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSchedule();
+  }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* Thanh header đỏ */}
-      <div className="p-4 bg-[#0a1a2f] flex items-center justify-between shadow-md">
-        <Link href="/home" className="text-white font-semibold hover:underline">
-          ← Quay lại
-        </Link>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-2xl font-bold text-center mb-6 text-blue-700">
+        📚 Lịch học cá nhân
+      </h1>
 
-        <h1 className="text-xl font-bold text-white"> Lịch học của bạn</h1>
-
-        <div className="flex items-center gap-2">
-          <label htmlFor="dateFilter" className="text-white font-medium">
-            Chọn ngày:
-          </label>
-          <input
-            id="dateFilter"
-            type="date"
-            className="px-2 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400 text-white"
-            onChange={handleDateChange}
+      {loading ? (
+        <p className="text-center">Đang tải lịch học...</p>
+      ) : (
+        <div className="bg-white border rounded-xl shadow-md p-4">
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 650 }}
+            defaultView="week"
+            messages={{
+              today: "Hôm nay",
+              previous: "Trước",
+              next: "Tiếp",
+              month: "Tháng",
+              week: "Tuần",
+              day: "Ngày",
+            }}
           />
         </div>
-      </div>
-
-      {/* Calendar chiếm toàn trang */}
-      <div className="flex-1">
-        <Calendar
-          localizer={localizer}
-          events={myEvents}
-          startAccessor="start"
-          endAccessor="end"
-          views={["month", "week", "day"]}
-          defaultView="week"
-          date={currentDate}
-          onNavigate={(date) => setCurrentDate(date)}
-          style={{
-            height: "100%",
-            minHeight: "calc(100vh - 70px)",
-            backgroundColor: "white",
-            color: "black",
-          }}
-        />
-      </div>
+      )}
     </div>
   );
 }

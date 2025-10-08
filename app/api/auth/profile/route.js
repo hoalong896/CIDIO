@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import jwt from "jsonwebtoken";
 
-// 🔑 Hàm decode token
+
 function getUserIdFromReq(req) {
   try {
     const authHeader = req.headers.get("authorization");
@@ -14,12 +14,12 @@ function getUserIdFromReq(req) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     return decoded.userId || null;
   } catch (err) {
-    console.error("❌ Lỗi decode token:", err);
+    console.error(" Lỗi decode token:", err);
     return null;
   }
 }
 
-// 📌 GET profile
+
 export async function GET(req) {
   const userId = getUserIdFromReq(req);
 

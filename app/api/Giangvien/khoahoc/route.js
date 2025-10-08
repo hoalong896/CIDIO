@@ -87,7 +87,7 @@ export async function GET(req) {
       return NextResponse.json({ error: "Token không hợp lệ" }, { status: 400 });
     }
 
-    // 🔹 Lấy danh sách khóa học của giảng viên
+    
     const { data, error } = await supabase
       .from("khoahoc")
       .select("*")
