@@ -88,7 +88,7 @@ export default function LichHocPage() {
     return (
       <div className="flex justify-center items-center h-[80vh]">
         <p className="text-gray-500 text-lg">
-          ⚠️ Chưa đăng ký khóa học nào hoặc chưa có lịch học!
+           Chưa đăng ký khóa học nào hoặc chưa có lịch học!
         </p>
       </div>
     );
