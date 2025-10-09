@@ -19,7 +19,7 @@ function getUserIdFromReq(req) {
   }
 }
 
-// GET danh sách khóa học đã đăng ký
+
 export async function GET(req) {
   const userId = getUserIdFromReq(req);
 
