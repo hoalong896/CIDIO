@@ -6,6 +6,7 @@ import Link from "next/link";
 
 export default function SidebarGiaoVien() {
   const [open, setOpen] = useState(true);
+  const [openStudentMenu, setOpenStudentMenu] = useState(false);
   const [openCourseMenu, setOpenCourseMenu] = useState(false);
 
   return (
@@ -16,9 +17,7 @@ export default function SidebarGiaoVien() {
     >
       {/* Logo */}
       <div className="flex items-center justify-between p-4 font-bold text-lg">
-        <span className="flex items-center gap-2">
-          {open && <span>GIÁO VIÊN</span>}
-        </span>
+        <span className="flex items-center gap-2">{open && "GIÁO VIÊN"}</span>
         <button onClick={() => setOpen(!open)}>
           <Menu size={20} />
         </button>
@@ -26,47 +25,44 @@ export default function SidebarGiaoVien() {
 
       {/* Nav menu */}
       <nav className="flex-1 mt-4 space-y-3 px-3 text-sm font-medium">
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/giaovien/danhgia"
-            className="flex items-center gap-2 w-full"
+        {/* --- Menu SINH VIÊN --- */}
+        <div>
+          <div
+            className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer"
+            onClick={() => setOpenStudentMenu(!openStudentMenu)}
           >
-            {open && "Đánh giá sinh viên"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/GIAOVIEN/baikiemtra"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Tạo bài kiểm tra"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/giaovien/tien-do"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Xem tiến độ học tập"}
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/GIAOVIEN/bangdiem2"
-            className="flex items-center gap-2 w-full"
-          >
-            {open && "Xem điểm"}
-          </Link>
+            <span>{open && "Sinh viên"}</span>
+            {open &&
+              (openStudentMenu ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+          </div>
+          {openStudentMenu && (
+            <div className="ml-4 mt-1 space-y-1">
+              <Link
+                href="/GIAOVIEN/danhgia"
+                className="block hover:bg-gray-600 p-2 rounded"
+              >
+                {open && "Đánh giá sinh viên"}
+              </Link>
+
+              <Link
+                href="/GIAOVIEN/danhsachsv"
+                className="block hover:bg-gray-600 p-2 rounded"
+              >
+                {open && "Xem danh sách sinh viên"}
+              </Link>
+            </div>
+          )}
         </div>
 
-        {/* Khóa học với menu con */}
+        {/* --- Menu KHÓA HỌC --- */}
         <div>
           <div
             className="flex items-center justify-between hover:bg-gray-700 p-2 rounded cursor-pointer"
             onClick={() => setOpenCourseMenu(!openCourseMenu)}
           >
             <span>{open && "Khóa học"}</span>
-            {open && (openCourseMenu ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+            {open &&
+              (openCourseMenu ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
           </div>
           {openCourseMenu && (
             <div className="ml-4 mt-1 space-y-1">
@@ -86,19 +82,33 @@ export default function SidebarGiaoVien() {
           )}
         </div>
 
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/GIAOVIEN/lichday"
-            className="flex items-center gap-2 w-full"
-          >
+        {/* --- Mục khác --- */}
+        <div className="hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <Link href="/GIAOVIEN/baikiemtra" className="block">
+            {open && "Tạo bài kiểm tra"}
+          </Link>
+        </div>
+
+        <div className="hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <Link href="/GIAOVIEN/tien-do" className="block">
+            {open && "Xem tiến độ học tập"}
+          </Link>
+        </div>
+
+        <div className="hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <Link href="/GIAOVIEN/bangdiem2" className="block">
+            {open && "Xem điểm"}
+          </Link>
+        </div>
+
+        <div className="hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <Link href="/GIAOVIEN/lichday" className="block">
             {open && "Lịch dạy"}
           </Link>
         </div>
-        <div className="flex items-center gap-2 hover:bg-gray-700 p-2 rounded cursor-pointer">
-          <Link
-            href="/GIAOVIEN/day_onl"
-            className="flex items-center gap-2 w-full"
-          >
+
+        <div className="hover:bg-gray-700 p-2 rounded cursor-pointer">
+          <Link href="/GIAOVIEN/day_onl" className="block">
             {open && "Dạy học online"}
           </Link>
         </div>

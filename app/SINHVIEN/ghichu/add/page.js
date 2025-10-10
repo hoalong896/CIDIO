@@ -1,28 +1,40 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Home } from "lucide-react";
 
 export default function ThemGhiChu() {
-  const [notes, setNotes] = useState([]);
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(""); // ✅ thêm dòng này
   const router = useRouter();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("study-notes");
-    if (stored) setNotes(JSON.parse(stored));
-  }, []);
+  const handleAdd = async () => {
+    if (!content.trim()) return; // ✅ bây giờ biến content đã có
 
-  const saveNotes = (newNotes) => {
-    setNotes(newNotes);
-    localStorage.setItem("study-notes", JSON.stringify(newNotes));
-  };
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Bạn chưa đăng nhập!");
+        router.push("/");
+        return;
+      }
 
-  const handleAdd = () => {
-    if (!content.trim()) return;
-    const date = new Date().toLocaleDateString();
-    saveNotes([...notes, { content, date }]);
-    router.push("/ghichu"); // quay lại danh sách
+      const res = await fetch("/api/Sinhvien/ghichu", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ noi_dung: content }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Lỗi khi thêm ghi chú!");
+      alert(" Ghi chú đã được lưu!");
+      router.push("/SINHVIEN/ghichu");
+    } catch (err) {
+      alert(" " + err.message);
+    }
   };
 
   return (
@@ -42,7 +54,7 @@ export default function ThemGhiChu() {
           Nội dung ghi chú
         </label>
         <textarea
-          placeholder="Nội dung"
+          placeholder="Nhập nội dung ghi chú..."
           value={content}
           onChange={(e) => setContent(e.target.value)}
           className="w-full p-3 border rounded-lg mb-6 text-black"

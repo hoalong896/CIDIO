@@ -1,90 +1,112 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Star, Trash2, Edit, Home } from "lucide-react";
+import { Plus, Trash2, Edit, Home, BookOpen } from "lucide-react";
 
 export default function GhiChuList() {
   const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const stored = localStorage.getItem("study-notes");
-    if (stored) setNotes(JSON.parse(stored));
+    const fetchNotes = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/Sinhvien/ghichu", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (res.ok) setNotes(data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchNotes();
   }, []);
 
-  const saveNotes = (newNotes) => {
-    setNotes(newNotes);
-    localStorage.setItem("study-notes", JSON.stringify(newNotes));
-  };
-
-  const handleDelete = (index) => {
-    if (confirm("Bạn có chắc muốn xóa ghi chú này?")) {
-      const newNotes = [...notes];
-      newNotes.splice(index, 1);
-      saveNotes(newNotes);
+  const handleDelete = async (id) => {
+    if (!confirm("Bạn có chắc muốn xóa ghi chú này?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await fetch("/api/Sinhvien/ghichu", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ma_ghichu: id }),
+      });
+      setNotes(notes.filter((n) => n.ma_ghichu !== id));
+    } catch (e) {
+      alert("Lỗi khi xóa ghi chú!");
     }
   };
 
+  if (loading)
+    return (
+      <div className="text-center mt-10 text-gray-500 animate-pulse">
+        Đang tải ghi chú...
+      </div>
+    );
+
   return (
-    <div className="min-h-screen bg-[#f3f4f6] p-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold flex items-center gap-2 text-black">
-          <Star /> Quản lý ghi chú
+        <h1 className="text-3xl font-bold text-indigo-700 flex items-center gap-2">
+          <BookOpen /> Ghi chú học tập
         </h1>
         <Link
           href="/home"
-          className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
+          className="flex items-center gap-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
         >
-          <Home size={18} /> Quay lại Home
+          <Home size={18} /> Home
         </Link>
       </div>
 
-      {/* Nút thêm ghi chú */}
       <Link
-        href="/ghichu/add"
-        className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 mb-6"
+        href="/SINHVIEN/ghichu/add"
+        className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 mb-6 transition"
       >
-        <Plus size={18} /> Thêm ghi chú mới
+        <Plus size={18} /> Thêm ghi chú
       </Link>
 
-      {/* Danh sách ghi chú */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {notes.length === 0 && (
-          <p className="text-gray-500 col-span-2 text-center">
-            Chưa có ghi chú nào.
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {notes.length === 0 ? (
+          <p className="text-gray-500 col-span-3 text-center">
+            Bạn chưa có ghi chú nào.
           </p>
+        ) : (
+          notes.map((note) => (
+            <div
+              key={note.ma_ghichu}
+              className="bg-white rounded-xl shadow p-4 hover:shadow-md transition"
+            >
+              <p className="text-gray-700 mb-3">{note.noi_dung}</p>
+              <p className="text-gray-400 text-sm mb-4">
+                Ngày tạo: {new Date(note.ngay_tao).toLocaleString()}
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() =>
+                    router.push(`/SINHVIEN/ghichu/update/${note.ma_ghichu}`)
+                  }
+                  className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  <Edit size={16} /> Sửa
+                </button>
+                <button
+                  onClick={() => handleDelete(note.ma_ghichu)}
+                  className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                >
+                  <Trash2 size={16} /> Xóa
+                </button>
+              </div>
+            </div>
+          ))
         )}
-        {notes.map((note, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-xl shadow p-4 flex flex-col justify-between"
-          >
-            <div className="flex justify-between items-start mb-2">
-              <h2 className="font-bold">Ghi chú #{index + 1}</h2>
-              <Star size={20} className="text-yellow-400" />
-            </div>
-            <p className="text-gray-700 mb-2">{note.content}</p>
-            <p className="text-gray-400 text-sm mb-4">
-              Ngày tạo: {note.date || "xx/xx/xxxx"}
-            </p>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => router.push(`/ghichu/update/${index}`)}
-                className="flex items-center gap-1 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                <Edit size={16} /> Sửa
-              </button>
-              <button
-                onClick={() => handleDelete(index)}
-                className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
-              >
-                <Trash2 size={16} /> Xóa
-              </button>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
